@@ -38,6 +38,7 @@ spec:
           app: details
           version: v1
       spec:
+        serviceAccountName: bookinfo-details
         containers:
         - name: details
           image: docker.io/istio/examples-bookinfo-details-v1:1.15.0
@@ -58,6 +59,7 @@ spec:
     name: http
   selectors:
     app: ratings
+---
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -199,19 +201,12 @@ spec:
         - name: productpage
           image: docker.io/istio/examples-bookinfo-productpage-v1:1.15.0
           imagePullPolicy: IfNotPresent
-          env:
-          - name: LOG_DIR
-            value: "/tmp/logs"
           ports:
           - containerPort: 9080
           volumeMounts:
-          - mountPath: "/opt/ibm/wlp/output"
-            name: wlp-output
           - mountPath: "/tmp"
             name: tmp
         volumes:
-        - name: wlp-output
-          empty-dir: {}
         - name: tmp
           empty-dir: {}
 ---
@@ -299,7 +294,7 @@ spec:
           image: docker.io/istio/examples-bookinfo-mysqldb-v1:1.15.0
           imagePullPolicy: IfNotPresent
           ports:
-          - containerPort: 27017
+          - containerPort: 3306
           env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
@@ -307,4 +302,3 @@ spec:
                 name: mysql-credentials
                 key: rootpasswd
           args: ["--default-authentication-plugin","mysql_native_password"]
----
